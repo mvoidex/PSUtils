@@ -2,6 +2,7 @@ PSUtils
 =======
 
 My PowerShell utils
+Place it in %MyDocuments%\WindowsPowerShell\Modules and `Import-Module PSUtils`
 
 * `json`, `unjson` - encode/decode JSON to/from PSObject
 * `clear-clibboard`, `set-clipboard`, `out-clipboard`, `get-clipboard` with aliases `clear-clip`, `set-clip`, `out-clip`, `get-clip` - clipboard utils, `out-clip` appends data to clipboard when called in `foreach`
