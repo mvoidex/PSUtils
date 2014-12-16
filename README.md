@@ -15,7 +15,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `time` - measure script block running time
 * `unzip`, `zip`, `lszip` - very simple zip utils in top of 7z
 * `codepage` - get/set codepage or run block with specified codepage
+* `encoding` - get/set encoding or run block with specified encoding, it's useful to run some cmd tool with $OutputEncoding set
 * `path` - just `GetFolderPath`
 * `rhistory` - search in history
 * `dictionary` (alias `dict`) and `gdict` - working with simple dictionary in top of JSON
-
