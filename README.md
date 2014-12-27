@@ -7,6 +7,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `json`, `unjson` - encode/decode JSON to/from PSObject
 * `clear-clibboard`, `set-clipboard`, `out-clipboard`, `get-clipboard` with aliases `clear-clip`, `set-clip`, `out-clip`, `get-clip` - clipboard utils, `out-clip` appends data to clipboard when called in `foreach`
 * `get-handle` - get handles with SysInternals handle util, returns `PSObject`s
+* `select-group` - match & select group in one function, `| select-group 'foo(.*)'` is easier to write than `| ? { $_ -match 'foo(.*)' | % { $matches[1] }`
 * `tags` - get tags of audio file with TagLib library
 * `whereis` - locate executable with `where` util
 * `invoke-cmd` - invoke .bat file and update environment variables changes
