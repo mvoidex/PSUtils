@@ -12,6 +12,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `whereis` - locate executable with `where` util
 * `invoke-cmd` - invoke .bat file and update environment variables changes
 * `screenshot`, `save-screenshot` - make (save) screenshot of display or window
+* `timer` - run script with interval
 
 * `download` - download page
 * `time` - measure script block running time
