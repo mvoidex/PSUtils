@@ -11,6 +11,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `tags` - get tags of audio file with TagLib library
 * `whereis` - locate executable with `where` util
 * `invoke-cmd` - invoke .bat file and update environment variables changes
+* `screenshot`, `save-screenshot` - make (save) screenshot of display or window
 
 * `download` - download page
 * `time` - measure script block running time
