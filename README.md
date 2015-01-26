@@ -13,8 +13,8 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `invoke-cmd` - invoke .bat file and update environment variables changes
 * `screenshot`, `save-screenshot` - make (save) screenshot of display or window
 * `timer` - run script with interval
-* `get-variables` - get variables as `hashtable`
-* `template` - replace variables in text, `'$x = $y...' | template @{x=10;y=(1,2,3)}` ⇒ `10 = 1`, `10 = 2`, `10 = 3`
+* `hash` - create `hashtable` from input, `ls | hash Name FullName`
+* `template` - replace variables in text/files, on string input replaces variables `'$x = $y...' | template @{x=10;y=(1,2,3)}` ⇒ `10 = 1`, `10 = 2`, `10 = 3`, on file/path input - replace variables both in file/path names and in its contents and copies substituted files to destination directory
 
 * `download` - download page
 * `time` - measure script block running time
