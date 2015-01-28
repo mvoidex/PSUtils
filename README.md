@@ -22,5 +22,6 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `codepage` - get/set codepage or run block with specified codepage
 * `encoding` - get/set encoding or run block with specified encoding, it's useful to run some cmd tool with $OutputEncoding set
 * `path` - just `GetFolderPath`
+* `import-profile` — reload profile scripts
 * `rhistory` - search in history
 * `dictionary` (alias `dict`) and `gdict` - working with simple dictionary in top of JSON
