@@ -21,6 +21,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `unzip`, `zip`, `lszip` - very simple zip utils in top of 7z
 * `codepage` - get/set codepage or run block with specified codepage
 * `encoding` - get/set encoding or run block with specified encoding, it's useful to run some cmd tool with $OutputEncoding set
+* `verbose` - set $VerbosePreference to `Continue` within script
 * `path` - just `GetFolderPath`
 * `import-profile` — reload profile scripts
 * `rhistory` - search in history
