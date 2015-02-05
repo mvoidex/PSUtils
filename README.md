@@ -22,6 +22,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `codepage` - get/set codepage or run block with specified codepage
 * `encoding` - get/set encoding or run block with specified encoding, it's useful to run some cmd tool with $OutputEncoding set
 * `verbose` - set $VerbosePreference to `Continue` within script
+* `verbs` - get verbs for file
 * `path` - just `GetFolderPath`
 * `import-profile` — reload profile scripts
 * `rhistory` - search in history
