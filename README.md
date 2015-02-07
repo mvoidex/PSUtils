@@ -26,4 +26,5 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `path` — just `GetFolderPath`
 * `import-profile` — reload profile scripts
 * `rhistory` — search in history
+* `environment` — get env as hashtable, or set env from hashtable
 * `dictionary` (alias `dict`) and `gdict` — working with simple dictionary in top of JSON
