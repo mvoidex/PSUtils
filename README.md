@@ -16,6 +16,8 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `timer` — run script with interval
 * `hash` — create `hashtable` from input, `ls | hash Name FullName`
 * `template` — replace variables in text/files, on string input replaces variables `'$x = $y...' | template @{x=10;y=(1,2,3)}` ⇒ `10 = 1`, `10 = 2`, `10 = 3`, on file/path input — replace variables both in file/path names and in its contents and copies substituted files to destination directory
+* `enumerate` — convert container to sequence of elements
+* `numerate` — number files, for example `numerate -Digits 2` will rename to `01.png`, `02.png`, ...
 
 * `download` — download page
 * `time` — measure script block running time
