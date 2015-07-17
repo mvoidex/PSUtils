@@ -19,6 +19,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `enumerate` — convert container to sequence of elements
 * `numerate` — numerate files, for example `ls *.png | sort -Property CreationTime | numerate -Digits 2` will rename to `01.png`, `02.png`, ... in order of `CreationTime`. `numerate -Digits 2 -Format 'foo {0}'` to specify template for new name, result will be `foo 01.png` etc.
 * `watch-path` — watch for file creation/changing/deletion in path
+* `beep` — shortcut for `[console]::Beep`
 
 * `download` — download page
 * `time` — measure script block running time
