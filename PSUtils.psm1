@@ -901,7 +901,7 @@ using System.Windows.Forms;
 
 namespace PInvoke
 {
-    public static class NativeMethods 
+    public static class NativeMethods
     {
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]

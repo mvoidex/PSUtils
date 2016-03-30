@@ -33,3 +33,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `rhistory` — search in history
 * `environment` — get env as hashtable, or set env from hashtable
 * `dictionary` (alias `dict`) and `gdict` — working with simple dictionary in top of JSON
+* `wait` — wait for process
+* `test-ctrlc` — throw exception if Ctrl+C pressed
+* `record` — record screenshots of process
+* `animate` — make gif-animation for images, uses ImageMagick `convert`
