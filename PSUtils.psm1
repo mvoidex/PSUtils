@@ -907,6 +907,9 @@ namespace PInvoke
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
         [DllImport("User32.dll")]
         static extern IntPtr GetDC(IntPtr hwnd);
 
@@ -982,7 +985,7 @@ function save-image
     {
         $res = $null
         $dir = $null
-        $filter = '(?<N>\d+*)\.png'
+        $filter = '(?<N>\d+)\.png'
         $name = $null
 
         if ($Image.Tag) {
@@ -990,6 +993,9 @@ function save-image
                 $name = $matches.Name
                 $dir = join-path (path MyPictures) Screenshots
                 $filter = "$name \((?<N>\d+)\)\.png"
+            }
+            elseif ($Image.Tag -eq 'screenshot') {
+                $dir = join-path (path MyPictures) Screenshots
             }
         }
 
@@ -1112,6 +1118,18 @@ function printscreen
     [Windows.Forms.Clipboard]::GetImage()
 }
 
+function test-ctrlc
+{
+    <#
+    .synopsis
+    Catch Ctrl-C and throw error
+    #>
+
+    if ($host.ui.rawui.keyavailable -and (3 -eq [int]$host.ui.rawui.readkey("AllowCtrlC,IncludeKeyUp,NoEcho").character)) {
+        throw (new-object ExecutionEngineException "Ctrl+C pressed")
+    }
+}
+
 function timer
 {
     <#
@@ -1127,18 +1145,103 @@ function timer
 
     param(
         [scriptblock]$script,
-        [int]$interval=1000,
+        [int]$interval=100,
         [int]$count=0)
 
-    & {
-        $n = 0
-        while (($n -lt $count) -or ($count -eq 0))
-        {
-            sleep -Milliseconds $interval
-            $n = $n + 1
-            $n
+    try {
+        & {
+            $n = 0
+            while (($n -lt $count) -or ($count -eq 0))
+            {
+                test-ctrlc
+                sleep -Milliseconds $interval
+                test-ctrlc
+                $n = $n + 1
+                $n
+            }
+        } | % $script
+    }
+    catch [ExecutionEngineException] {
+    }
+}
+
+function record
+{
+    <#
+    .synopsis
+    Record screenshots to make animation
+    .parameter process
+    Process to record
+    .parameter interval
+    Screenshots interval
+    .parameter out
+    Output directory
+    .parameter foreground
+    Record only when process is foreground
+    #>
+
+    param(
+        [System.Diagnostics.Process]$process,
+        [int]$interval = 100,
+        [string]$out,
+        [switch]$foreground)
+
+    set-variable -name images -value @() -scope global
+    timer -interval $interval -script {
+        if (!$foreground -or ($process.MainWindowHandle -eq [PInvoke.NativeMethods]::GetForegroundWindow())) {
+        screenshot -Process $process | % {
+            $image = save-image -Out $out -Image $_
+            write-host $image
+            $images = get-variable -name images -scope global -valueonly
+            set-variable -name images -value ($images + $image) -scope global
         }
-    } | % $script
+            
+        }
+    }
+    $images = get-variable -name images -scope global -valueonly
+    remove-variable -name images -scope global
+    $images
+}
+
+function animate
+{
+    <#
+    .synopsis
+    Make gif animation from images
+    .parameter out
+    Output file
+    .parameter delay
+    Gif delay
+    .parameter file
+    Files to convert
+    .parameter delete
+    Delete files after convert
+    #>
+
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$out,
+        [int]$delay = 20,
+        [Parameter(ValueFromPipeline=$true)]
+        [System.IO.FileInfo]$file,
+        [switch]$delete)
+
+    begin {
+        if (!(whereis convert)) {
+            throw [System.IO.FileNotFoundException] "ImageMagick's convert not found"
+        }
+        $files = @()
+    }
+    process {
+        $files = $files + $file
+    }
+    end {
+        ($files | sort -Property LastWriteTime | % { """$($_.FullName)""" }) -join ' ' | convert -delay $delay '@-' -layers optimize $out
+        if ($delete) {
+            $files | rm
+        }
+        gi $out
+    }
 }
 
 function now
