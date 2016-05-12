@@ -1302,7 +1302,9 @@ function enumerate
         [Parameter(ValueFromPipeline = $true)]
         [object]$collection)
 
-    $collection.GetEnumerator()
+    process {
+        $collection.GetEnumerator()
+    }
 }
 
 function numerate
