@@ -1560,3 +1560,24 @@ function escape
 
     $str -creplace '\\"', '\\"' -creplace '"', '\"'
 }
+
+function update-file
+{
+    <#
+    .synopsis
+    Touch file: create empty or update timestamp
+    #>
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]$file)
+
+    if (test-path $file) {
+        (gi $file).LastWriteTime = get-date
+    }
+    else {
+        echo $null | out-file $file
+    }
+}
+
+new-alias touch update-file -scope global
