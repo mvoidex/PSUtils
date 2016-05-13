@@ -1583,3 +1583,37 @@ function update-file
 }
 
 new-alias touch update-file -scope global
+
+function expand
+{
+    <#
+    .synopsis
+    Expand string
+    #>
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]$s,
+        [hashtable]$vars)
+
+    if ($vars) {
+        $vars | enumerate | % { set-variable $_.Name $_.Value -scope local }
+    }
+
+    $ExecutionContext.InvokeCommand.ExpandString($s)
+}
+
+function closure
+{
+    <#
+    .synopsis
+    Catch variables in closure via string expansion
+    #>
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [scriptblock]$s,
+        [hashtable]$vars)
+
+    [scriptblock]::create((expand ([string]$s) $vars))
+}

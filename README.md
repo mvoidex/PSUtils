@@ -37,3 +37,5 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `test-ctrlc` — throw exception if Ctrl+C pressed
 * `record` — record screenshots of process
 * `animate` — make gif-animation for images, uses ImageMagick `convert`
+* `expand` — expand string with variables
+* `closure` — simple closure, convert script to string, then expand and convert back to script
