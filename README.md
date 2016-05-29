@@ -20,8 +20,10 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `numerate` — numerate files, for example `ls *.png | sort -Property CreationTime | numerate -Digits 2` will rename to `01.png`, `02.png`, ... in order of `CreationTime`. `numerate -Digits 2 -Format 'foo {0}'` to specify template for new name, result will be `foo 01.png` etc.
 * `watch-path` — watch for file creation/changing/deletion in path
 * `beep` — shortcut for `[console]::Beep`
+* `xpath` — query elements from HTML
 
 * `download` — download page
+* `wreq` — invoke web request, returning string result
 * `time` — measure script block running time
 * `unzip`, `zip`, `lszip` — very simple zip utils in top of 7z
 * `codepage` — get/set codepage or run block with specified codepage

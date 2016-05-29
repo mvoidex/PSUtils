@@ -93,6 +93,97 @@ function download([string]$url, [string]$path)
     $client.DownloadFile($url, $path)
 }
 
+function wreq
+{
+    <#
+    .synopsis
+    Read web page
+    .parameter url
+    URL of page
+    .parameter encoding
+    Encoding
+    .example
+    wreq www.yandex.ru utf-8
+    #>
+
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]$url,
+        [string]$encoding = 'utf-8')
+
+    if (!($url -match '^http://')) {
+        $url = 'http://' + $url
+    }
+
+    $wr = new-object system.net.webclient
+    $wr.encoding = [system.text.encoding]::getencoding($encoding)
+    $wr.downloadstring([uri]$url)
+}
+
+$htmlagilitypack = whereis HtmlAgilityPack.dll
+
+add-type -path (whereis HtmlAgilityPack.dll)
+
+function html
+{
+    <#
+    .synopsis
+    Parse HTML
+    #>
+
+    param(
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
+        [string]$contents)
+
+    $doc = new-object HtmlAgilityPack.HtmlDocument
+    $doc.LoadHtml($contents)
+    $doc
+}
+
+function xpath
+{
+    <#
+    .synopsis
+    Select nodes from HTML with XPath
+    .parameter document
+    HTML document
+    .parameter node
+    HTML node
+    .parameter path
+    XPath expression
+    #>
+
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$path,
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true, ParameterSetName = "string")]
+        [string]$contents,
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true, ParameterSetName = "document")]
+        [HtmlAgilityPack.HtmlDocument]$document,
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true, ParameterSetName = "node")]
+        [HtmlAgilityPack.HtmlNode]$node)
+
+    process {
+        $n = $null
+
+        switch ($pscmdlet.parametersetname) {
+            "string" {
+                $doc = new-object HtmlAgilityPack.HtmlDocument
+                $doc.LoadHtml($contents)
+                $n = $doc.DocumentNode
+            }
+            "document" {
+                $n = $document.DocumentNode
+            }
+            "node" {
+                $n = $node
+            }
+        }
+
+        $n.SelectNodes($path)
+    }
+}
+
 function time([scriptblock]$s)
 {
     <#
@@ -450,7 +541,7 @@ function clear-clipboard
     [Windows.Clipboard]::Clear()
 }
 
-new-alias clear-clip clear-clipboard -scope global
+new-alias clear-clip clear-clipboard -scope global -erroraction silentlycontinue
 
 function set-clipboard
 {
@@ -521,7 +612,7 @@ function out-clipboard
     }
 }
 
-new-alias out-clip out-clipboard -scope global
+new-alias out-clip out-clipboard -scope global -erroraction silentlycontinue
 
 function get-clipboard
 {
@@ -548,7 +639,7 @@ function get-clipboard
     [Windows.Clipboard]::GetText() -split $Separator
 }
 
-new-alias get-clip get-clipboard -scope global
+new-alias get-clip get-clipboard -scope global -erroraction silentlycontinue
 
 # taglib
 $TagLib = $PSScriptRoot + "\taglib-sharp.dll"
@@ -780,7 +871,7 @@ function dictionary
     }
 }
 
-new-alias dict dictionary -scope global
+new-alias dict dictionary -scope global -erroraction silentlycontinue
 
 function gdict
 {
@@ -1582,7 +1673,7 @@ function update-file
     }
 }
 
-new-alias touch update-file -scope global
+new-alias touch update-file -scope global -erroraction silentlycontinue
 
 function expand
 {
