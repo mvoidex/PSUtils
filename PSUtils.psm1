@@ -60,7 +60,7 @@ function unjson
 }
 
 # download page
-function download([string]$url, [string]$path)
+function download
 {
     <#
     .synopsis
@@ -75,22 +75,33 @@ function download([string]$url, [string]$path)
     download "www.foo.org/1.jpg" subdir
     #>
 
-    $fname = split-path -leaf $url
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]$url,
+        [string]$path)
 
-    if (!$path)
-    {
-        $path = (gl).Path
+    begin {
+        if (!$path) {
+            $path = (gl).Path
+        }
+        else {
+            $path = gi $path
+        }
     }
+    process {
+        if (test-path -pathType Container $path) {
+            $fname = wget -method head $url | % { [uri]::UnescapeDataString($_.BaseResponse.ResponseUri.Segments[-1]) }
+            $dst = join-path $path $fname
+        }
+        else {
+            $dst = $path
+        }
 
-    if (test-path -pathType Container $path)
-    {
-        $path = join-path $path $fname
+        echo "Downloading $url to $dst"
+
+        $client = New-Object System.Net.WebClient
+        $client.DownloadFile($url, $dst)        
     }
-
-    echo "Downloading $url to $path"
-
-    $client = New-Object System.Net.WebClient
-    $client.DownloadFile($url, $path)
 }
 
 function wreq
@@ -1687,11 +1698,14 @@ function expand
         [string]$s,
         [hashtable]$vars)
 
+    # Use some name, that can't present in script as expandable variable
+    set-variable ':script:' $s -scope local
+
     if ($vars) {
         $vars | enumerate | % { set-variable $_.Name $_.Value -scope local }
     }
 
-    $ExecutionContext.InvokeCommand.ExpandString($s)
+    $ExecutionContext.InvokeCommand.ExpandString((get-variable ':script:' -scope local -valueonly))
 }
 
 function closure
