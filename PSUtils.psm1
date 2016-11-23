@@ -59,6 +59,29 @@ function unjson
     }
 }
 
+function whereis
+{
+    <#
+    .synopsis
+    Get location of executable
+    .parameter name
+    Name of executable
+    .example
+    PS> whereis ping | % FullName
+    C:\Windows\System32\PING.EXE
+    #>
+
+    param(
+        [Parameter(Mandatory=$true)][string]
+        $name)
+
+    $path = where.exe $name 2> $null
+    if ($?)
+    {
+        ls $path
+    }
+}
+
 # download page
 function download
 {
@@ -122,7 +145,7 @@ function wreq
         [string]$url,
         [string]$encoding = 'utf-8')
 
-    if (!($url -match '^http://')) {
+    if (!($url -match '^http(s?)://')) {
         $url = 'http://' + $url
     }
 
@@ -133,7 +156,9 @@ function wreq
 
 $htmlagilitypack = whereis HtmlAgilityPack.dll
 
-add-type -path (whereis HtmlAgilityPack.dll)
+if ($htmlagilitypack) {
+    add-type -path $htmlagilitypack
+}
 
 function html
 {
@@ -902,29 +927,6 @@ function gdict
         $path)
 
     -join (gc (ls $path)) | json | % { $d = $_; $d.Keys | % { $_ + " = " + $d[$_] } }
-}
-
-function whereis
-{
-    <#
-    .synopsis
-    Get location of executable
-    .parameter name
-    Name of executable
-    .example
-    PS> whereis ping | % FullName
-    C:\Windows\System32\PING.EXE
-    #>
-
-    param(
-        [Parameter(Mandatory=$true)][string]
-        $name)
-
-    $path = where.exe $name 2> $null
-    if ($?)
-    {
-        ls $path
-    }
 }
 
 function select-group
