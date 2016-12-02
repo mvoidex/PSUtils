@@ -63,24 +63,26 @@ function whereis
 {
     <#
     .synopsis
-    Get location of executable
+    Get location of file in PATH
     .parameter name
-    Name of executable
+    Name of executable, omit if you want to get all names in PATH
     .example
     PS> whereis ping | % FullName
     C:\Windows\System32\PING.EXE
     #>
 
     param(
-        [Parameter(Mandatory=$true)][string]
-        $name)
+        [string]$name)
 
-    $path = where.exe $name 2> $null
-    if ($?)
-    {
-        ls $path
+    $env:path -split ';' | % {
+        if ($_ -and (test-path $_)) {
+            ls -path $_ -filter $name
+            ls -path $_ -filter "$($name).*"
+        }
     }
 }
+
+set-alias which whereis
 
 # download page
 function download
@@ -157,7 +159,7 @@ function wreq
 $htmlagilitypack = whereis HtmlAgilityPack.dll
 
 if ($htmlagilitypack) {
-    add-type -path $htmlagilitypack
+    add-type -path $htmlagilitypack.FullName
 }
 
 function html
