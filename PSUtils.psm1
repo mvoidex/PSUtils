@@ -1608,12 +1608,13 @@ function watch-path
         [scriptblock]$created,
         [scriptblock]$changed,
         [scriptblock]$deleted,
+        [scriptblock]$renamed,
         [string]$name,
         [switch]$recurse)
 
-    if (!$created -and !$changed -and !$deleted) {
+    if (!$created -and !$changed -and !$deleted -and !$renamed) {
         if ($name) {
-            "created", "changed", "deleted" | % {
+            "created", "changed", "deleted", "renamed" | % {
                 get-eventsubscriber "$($name)-$($_)" -erroraction ignore | % { unregister-event $_.sourceidentifier }
                 get-event "$($name)-$($_)" -erroraction ignore | % { remove-event $_.sourceidentifier }
             }
@@ -1634,6 +1635,7 @@ function watch-path
         register-objectevent $fsw created -sourceidentifier "$($name)-created" -Action $created | out-null
         register-objectevent $fsw changed -sourceidentifier "$($name)-changed" -Action $changed | out-null
         register-objectevent $fsw deleted -sourceidentifier "$($name)-deleted" -Action $deleted | out-null
+        register-objectevent $fsw renamed -sourceidentifier "$($name)-renamed" -Action $renamed | out-null
         $name
     }
 }
