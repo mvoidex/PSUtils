@@ -949,15 +949,23 @@ function select-group
     param(
         [string]
         $Regex,
+        [switch]
+        $CaseInsensitive,
         $Group = 1,
         [Parameter(ValueFromPipeline = $true)][string]
         $Input)
 
     process
     {
-        if ($Input -match $Regex)
-        {
-            $matches[$Group]
+        if ($CaseInsensitive) {
+            if ($Input -match $Regex) {
+                $matches[$Group]
+            }
+        }
+        else {
+            if ($Input -cmatch $Regex) {
+                $matches[$Group]
+            }
         }
     }
 }
