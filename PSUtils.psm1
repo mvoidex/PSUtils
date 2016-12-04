@@ -76,7 +76,6 @@ function whereis
 
     $env:path -split ';' | % {
         if ($_ -and (test-path $_)) {
-            ls -path $_ -filter $name
             ls -path $_ -filter "$($name).*"
         }
     }
