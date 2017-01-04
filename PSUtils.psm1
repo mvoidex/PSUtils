@@ -930,40 +930,76 @@ function gdict
     -join (gc (ls $path)) | json | % { $d = $_; $d.Keys | % { $_ + " = " + $d[$_] } }
 }
 
-function select-group
+function select-match
 {
     <#
     .synopsis
-    Check whether input matches regex and returns matched group
-    .parameter Regex
-    Regular expression to match
-    .parameter Group
-    Group name of index to select, default is 1 (i.e returns first group)
+    Finds strings that matches regex, like `select-string` but also colorize output
+    .parameter str
+    String to find regex in
+    .parameter pattern
+    Regex pattern
+    .parameter onlymatch
+    Return (output) only matched value
+    .parameter caseinsensitive
+    Case insensitive match
+    .parameter group
+    Match specific group, can be group index or name if there are named groups
+    .parameter nocolor
+    Don't color output and return it as string
     .example
-    PS> 'foobar', 'foobaz', 'keke' | match-group 'foo(.*)'
-    bar
-    baz
+    PS> 'foo 123 321' | select-match '\d+' -o
+    123
+    321
+    PS> 'foo', 'some x=1', 'bar y=3' | select-match '[a-z]+=(?<val>\d+)'
+    some x=1
+    bar y=3
+    PS> 'foo', 'some x=1', 'bar y=3' | select-match '[a-z]+=(?<val>\d+)' -o
+    x=1
+    y=3
+    PS> 'foo', 'some x=1', 'bar y=3' | select-match '[a-z]+=(?<val>\d+)' -o -group val
+    1
+    3
     #>
 
     param(
-        [string]
-        $Regex,
-        [switch]
-        $CaseInsensitive,
-        $Group = 1,
-        [Parameter(ValueFromPipeline = $true)][string]
-        $Input)
+        [Parameter(ValueFromPipeline = $true)]
+        [string]$str,
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$pattern,
+        [switch]$onlymatch,
+        [switch]$caseinsensitive,
+        $group = 0,
+        [switch]$nocolor)
 
     process
     {
-        if ($CaseInsensitive) {
-            if ($Input -match $Regex) {
-                $matches[$Group]
+        $r = $str | select-string $pattern -allmatches -casesensitive:(!$caseinsensitive)
+        if ($r) {
+            if ($onlymatch) {
+                $r.matches | % { $_.groups[$group] } | % {
+                    $res = $str.substring($_.index, $_.length)
+                    if ($nocolor) {
+                        $res
+                    }
+                    else {
+                        write-host $res -f red
+                    }
+                }
             }
-        }
-        else {
-            if ($Input -cmatch $Regex) {
-                $matches[$Group]
+            else {
+                if ($nocolor) {
+                    $str
+                }
+                else {
+                    $index = 0
+                    $r.matches | % { $_.groups[$group] } | % {
+                        write-host $str.substring($index, $_.index - $index) -nonewline
+                        write-host $str.substring($_.index, $_.length) -f red -nonewline
+                        $index = $_.index + $_.length
+                    }
+                    write-host $str.substring($index)
+                }
             }
         }
     }
@@ -1117,7 +1153,7 @@ function save-image
             if (!$dir) {
                 $dir = gl
             }
-            $num = ls $dir -Filter '*.png' | select-group $filter -Group N | measure -Maximum | ? { $_.Maximum -ne $null } | % { $_.Maximum + 1 }
+            $num = ls $dir -Filter '*.png' | select-match $filter -Group N | measure -Maximum | ? { $_.Maximum -ne $null } | % { $_.Maximum + 1 }
             if (!$num) { $num = 0 }
             if ($name) {
                 $res = join-path $dir "$name ($num).png"
@@ -1131,7 +1167,7 @@ function save-image
             if (test-path $Out -PathType Container)
             {
                 $dir = resolve-path $Out
-                $num = ls $dir -Filter '*.png' | select-group $filter -Group N | measure -Maximum | ? { $_.Maximum -ne $null } | % { $_.Maximum + 1 }
+                $num = ls $dir -Filter '*.png' | select-match $filter -Group N | measure -Maximum | ? { $_.Maximum -ne $null } | % { $_.Maximum + 1 }
                 if (!$num) { $num = 0 }
                 if ($name) {
                     $res = join-path $dir "$name ($num).png"
@@ -1693,7 +1729,7 @@ function update-file
         (gi $file).LastWriteTime = get-date
     }
     else {
-        echo $null | out-file $file
+        echo $null | out-file $file -encoding ascii
     }
 }
 
