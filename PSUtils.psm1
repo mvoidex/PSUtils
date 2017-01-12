@@ -940,7 +940,7 @@ function select-match
     .parameter pattern
     Regex pattern
     .parameter onlymatch
-    Return (output) only matched value
+    Return (output) only matched value, implies nocolor
     .parameter caseinsensitive
     Case insensitive match
     .parameter group
@@ -978,13 +978,7 @@ function select-match
         if ($r) {
             if ($onlymatch) {
                 $r.matches | % { $_.groups[$group] } | % {
-                    $res = $str.substring($_.index, $_.length)
-                    if ($nocolor) {
-                        $res
-                    }
-                    else {
-                        write-host $res -f red
-                    }
+                    $str.substring($_.index, $_.length)
                 }
             }
             else {
