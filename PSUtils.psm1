@@ -999,6 +999,76 @@ function select-match
     }
 }
 
+function colorize
+{
+    <#
+    .synopsis
+    Colorize output. Pass regex for some color and it will colorize matched parts
+    It accepts dictionary in format @{Color=Regex} or also regex
+    for each color as separate flag
+    .example
+    colorize 'some string 123' @{Red="\\d+"}
+    'some string 123' | colorize @{Red="\\d+"}
+    'some string 123' | colorize -Red \\d+
+    #>
+
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]$str,
+        [hashtable]$colors=@{},
+        [string]$Black,
+        [string]$DarkBlue,
+        [string]$DarkGreen,
+        [string]$DarkCyan,
+        [string]$DarkRed,
+        [string]$DarkMagenta,
+        [string]$DarkYellow,
+        [string]$Gray,
+        [string]$DarkGray,
+        [string]$Blue,
+        [string]$Green,
+        [string]$Cyan,
+        [string]$Red,
+        [string]$Magenta,
+        [string]$Yellow,
+        [string]$White,
+        [switch]$caseinsensitive)
+
+    begin {
+        if ($Black) { $colors.Black = $Black }
+        if ($DarkBlue) { $colors.DarkBlue = $DarkBlue }
+        if ($DarkGreen) { $colors.DarkGreen = $DarkGreen }
+        if ($DarkCyan) { $colors.DarkCyan = $DarkCyan }
+        if ($DarkRed) { $colors.DarkRed = $DarkRed }
+        if ($DarkMagenta) { $colors.DarkMagenta = $DarkMagenta }
+        if ($DarkYellow) { $colors.DarkYellow = $DarkYellow }
+        if ($Gray) { $colors.Gray = $Gray }
+        if ($DarkGray) { $colors.DarkGray = $DarkGray }
+        if ($Blue) { $colors.Blue = $Blue }
+        if ($Green) { $colors.Green = $Green }
+        if ($Cyan) { $colors.Cyan = $Cyan }
+        if ($Red) { $colors.Red = $Red }
+        if ($Magenta) { $colors.Magenta = $Magenta }
+        if ($Yellow) { $colors.Yellow = $Yellow }
+        if ($White) { $colors.White = $White }
+    }
+    process {
+        $ms = $null
+        $colors | enumerate | % {
+            $color = $_.Name
+            $r = $str | select-string $_.Value -allmatches -casesensitive:(!$caseinsensitive)
+            $ms += $r.matches | % { @{color=$color;match=$_} }
+        }
+        $index = 0
+        $ms | sort -property { $_.match.index } | % {
+            write-host $str.substring($index, $_.match.index - $index) -nonewline
+            write-host $str.substring($_.match.index, $_.match.length) -f $_.color -nonewline
+            $index = $_.match.index + $_.match.length
+        }
+        write-host $str.substring($index)
+    }
+}
+
 function wait
 {
     <#

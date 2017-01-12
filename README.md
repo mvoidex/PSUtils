@@ -8,6 +8,7 @@ Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils
 * `clear-clibboard`, `set-clipboard`, `out-clipboard`, `get-clipboard` with aliases `clear-clip`, `set-clip`, `out-clip`, `get-clip` — clipboard utils, `out-clip` appends data to clipboard when called in `foreach`
 * `get-handle` — get handles with SysInternals handle util, returns `PSObject`s
 * `select-match` — select-string with two enhancements: allows selecting only matched value (or group), and also can color output
+* `colorize` — colorize regex-matched parts of string
 * `tags` — get tags of audio file with TagLib library
 * `whereis` — locate executable with `where` util
 * `invoke-cmd` — invoke .bat file and update environment variables changes
