@@ -999,6 +999,8 @@ function select-match
     }
 }
 
+set-alias sema select-match
+
 function colorize
 {
     <#
