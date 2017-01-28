@@ -1055,7 +1055,7 @@ function colorize
         if ($White) { $colors.White = $White }
     }
     process {
-        $ms = $null
+        $ms = @()
         $colors | enumerate | % {
             $color = $_.Name
             $r = $str | select-string $_.Value -allmatches -casesensitive:(!$caseinsensitive)
