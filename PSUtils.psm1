@@ -962,6 +962,7 @@ function select-match
     3
     #>
 
+    [CmdLetBinding()]
     param(
         [Parameter(ValueFromPipeline = $true)]
         [string]$str,
@@ -972,6 +973,10 @@ function select-match
         $group = 0,
         [switch]$nocolor)
 
+    begin
+    {
+        $pipe = $pscmdlet.myinvocation.pipelineposition -lt $pscmdlet.myinvocation.pipelinelength
+    }
     process
     {
         $r = $str | select-string $pattern -allmatches -casesensitive:(!$caseinsensitive)
@@ -982,7 +987,7 @@ function select-match
                 }
             }
             else {
-                if ($nocolor) {
+                if ($nocolor -or $pipe) {
                     $str
                 }
                 else {
