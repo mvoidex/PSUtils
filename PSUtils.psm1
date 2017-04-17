@@ -1842,3 +1842,51 @@ function closure
 
     [scriptblock]::create((expand ([string]$s) $vars))
 }
+
+function fuzzymatch
+{
+    <#
+    .synopsis
+    Fuzzy match strings with pattern
+    .parameter sorted
+    Return best matches first (with less start index of match)
+    .parameter pattern
+    Pattern to match
+    .example
+    PS> 'footer', 'over', 'boo' | fuzzy-match 'oe'
+    footer
+    over
+    .example
+    PS> 'footer', 'over', 'boo' | fuzzy-match 'oe' -sorted
+    over
+    footer
+    #>
+
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$pattern,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [string]$input,
+        [switch]$sorted)
+
+    begin {
+        $result = @()
+        $rx = ($pattern | enumerate) -join '.*'
+    }
+    process {
+        $r = [regex]::match($input, $rx)
+        if ($r.success) {
+            if ($sorted) {
+                $result += @{'result'=$input; 'index'=$r.index}
+            }
+            else {
+                $input
+            }
+        }
+    }
+    end {
+        if ($sorted) {
+            $result | sort -property { $_.index } | % result
+        }
+    }
+}
