@@ -1843,6 +1843,31 @@ function closure
     [scriptblock]::create((expand ([string]$s) $vars))
 }
 
+$src = @'
+using System;
+public class LexicographicalArray : IComparable {
+    public LexicographicalArray(object[] x) { this.x = x; }
+    public object[] x;
+    public int CompareTo(object obj) {
+        if (obj == null) { return 1; }
+        if (this == obj) { return 0; }
+        LexicographicalArray other = obj as LexicographicalArray;
+        if (other == null) { throw new ArgumentException("fuck you"); }
+        int i = 0;
+        while (i < this.x.Length && i < other.x.Length) {
+            IComparable left = this.x[i] as IComparable;
+            IComparable right = other.x[i] as IComparable;
+            int cmp = left.CompareTo(right);
+            if (cmp == 0) { ++i; continue; }
+            return cmp;
+        }
+        return this.x.Length.CompareTo(other.x.Length);
+    }
+}
+'@
+
+Add-Type -TypeDefinition $src -ReferencedAssemblies System
+
 function fuzzymatch
 {
     <#
@@ -1871,13 +1896,13 @@ function fuzzymatch
 
     begin {
         $result = @()
-        $rx = ($pattern | enumerate) -join '.*'
+        $rx = ($pattern | enumerate | % { '(' + $_ + ')' }) -join '.*'
     }
     process {
         $r = [regex]::match($input, $rx)
         if ($r.success) {
             if ($sorted) {
-                $result += @{'result'=$input; 'index'=$r.index}
+                $result += @{'result'=$input; 'indices'=[LexicographicalArray]$r.groups.index}
             }
             else {
                 $input
@@ -1886,7 +1911,7 @@ function fuzzymatch
     }
     end {
         if ($sorted) {
-            $result | sort -property { $_.index } | % result
+            $result | sort -property { $_.indices } | % result
         }
     }
 }
