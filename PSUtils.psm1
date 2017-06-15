@@ -1,5 +1,19 @@
 Add-Type -AssemblyName System.Web.Extensions
 
+function app
+{
+    <#
+    .synopsis
+    Run application (in case of ambiguity between app and cmdlet)
+    #>
+
+    param(
+        [string]$name,
+        [Parameter(ValueFromRemainingArguments=$true)]$args)
+
+    & (gcm $name -CommandType Application) $args
+}
+
 function json
 {
     <#

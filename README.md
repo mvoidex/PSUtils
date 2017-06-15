@@ -4,6 +4,7 @@ PSUtils
 My PowerShell utils<br>
 Place it in `%MyDocuments%\WindowsPowerShell\Modules` and `Import-Module PSUtils`
 
+* `app` — run application (in case of ambiguity between app and cmdlet)
 * `json`, `unjson` — encode/decode JSON to/from PSObject
 * `clear-clibboard`, `set-clipboard`, `out-clipboard`, `get-clipboard` with aliases `clear-clip`, `set-clip`, `out-clip`, `get-clip` — clipboard utils, `out-clip` appends data to clipboard when called in `foreach`
 * `get-handle` — get handles with SysInternals handle util, returns `PSObject`s
