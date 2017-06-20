@@ -1615,7 +1615,7 @@ function template
     .parameter vars
     Replace variables
     .parameter eval
-    Eval expressions with $(...) syntax
+    Eval expressions with $(...) syntax (or $[|...|]$ if expression contains braces)
     .parameter dest
     Target directory (for templating files)
     .example
@@ -1650,16 +1650,27 @@ function template
         {
             "string" {
                 $input | % {
-                    if ($eval -and ($_ -match "\`$\(([^\)]+)\)\.\.\."))
+                    if ($eval -and ($_ -match "\`$\[\|(.*?)\|\]\.\.\.")) # $[| expr |]...
                     {
                         $line = $_
                         $s = [scriptblock]::Create($matches[1])
-                        & $s | % { $line -replace "\`$\(([^\)]+)\)\.\.\.", "$($_)" } | template -vars $vars -eval:$eval
+                        & $s | % { $line -replace "\`$\[\|(.*?)\|\]\.\.\.", "$($_)" } | template -vars $vars -eval:$eval
                     }
-                    elseif ($eval -and ($_ -match "\`$\(([^\)]+)\)"))
+                    elseif ($eval -and ($_ -match "\`$\[\|(.*?)\|\]")) # $[| expr |]
                     {
                         $s = [scriptblock]::Create($matches[1])
-                        $_ -replace "\`$\(([^\)]+)\)", (& $s) | template -vars $vars -eval:$eval
+                        $_ -replace "\`$\[\|(.*?)\|\]", (& $s) | template -vars $vars -eval:$eval
+                    }
+                    elseif ($eval -and ($_ -match "\`$\((.*?)\)\.\.\.")) # $( expr )...
+                    {
+                        $line = $_
+                        $s = [scriptblock]::Create($matches[1])
+                        & $s | % { $line -replace "\`$\((.*?)\)\.\.\.", "$($_)" } | template -vars $vars -eval:$eval
+                    }
+                    elseif ($eval -and ($_ -match "\`$\((.*?)\)")) # $( expr )
+                    {
+                        $s = [scriptblock]::Create($matches[1])
+                        $_ -replace "\`$\((.*?)\)", (& $s) | template -vars $vars -eval:$eval
                     }
                     elseif ($_ -match "\`$(\w+)\.\.\.")
                     {
