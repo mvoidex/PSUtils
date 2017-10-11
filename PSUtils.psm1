@@ -1679,7 +1679,7 @@ function template
                     }
                     elseif ($_ -match "\`$(\w+)")
                     {
-                        $_ -replace "\`$(\w+)", ($vars.($matches[1])) | template -vars $vars -eval:$eval
+                        $_ -replace ([regex]::escape("`$" + $matches[1])), ($vars.($matches[1])) | template -vars $vars -eval:$eval
                     }
                     else
                     {
