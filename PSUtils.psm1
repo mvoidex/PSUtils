@@ -1878,7 +1878,7 @@ public class LexicographicalArray : IComparable {
         if (obj == null) { return 1; }
         if (this == obj) { return 0; }
         LexicographicalArray other = obj as LexicographicalArray;
-        if (other == null) { throw new ArgumentException("fuck you"); }
+        if (other == null) { throw new ArgumentException("Can compare only to LexicographicalArray"); }
         int i = 0;
         while (i < this.x.Length && i < other.x.Length) {
             IComparable left = this.x[i] as IComparable;
