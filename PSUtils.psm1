@@ -1872,6 +1872,7 @@ $src = @'
 using System;
 public class LexicographicalArray : IComparable {
     public LexicographicalArray(object[] x) { this.x = x; }
+    public LexicographicalArray(object x) { this.x = new object[]{x}; }
     public object[] x;
     public int CompareTo(object obj) {
         if (obj == null) { return 1; }
@@ -1914,6 +1915,7 @@ function fuzzymatch
 
     param(
         [Parameter(Mandatory=$true)]
+        [AllowEmptyString()]
         [string]$pattern,
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [string]$input,
