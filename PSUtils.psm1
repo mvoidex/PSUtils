@@ -1630,7 +1630,7 @@ function template
     #>
 
     param(
-        [Parameter(Mandatory = $true, Position = 0)]
+        [Parameter(Position = 0)]
         [hashtable]$vars = (get-variable | hash Name Value),
         [switch]$eval,
         [Parameter(ValueFromPipeline = $true, ValueFromRemainingArguments = $true, ParameterSetName = "string")]
@@ -1942,3 +1942,20 @@ function fuzzymatch
         }
     }
 }
+
+function convertfrom-timestamp
+{
+    <#
+    .synopsis
+    Get date from unix timestamp
+    .parameter timestamp
+    Seconds from unix epoch
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        [int]$timestamp)
+
+    return ((get-date 01.01.1970) + [system.timespan]::fromseconds($timestamp))
+}
+
+new-alias unixtime convertfrom-timestamp -scope global -erroraction silentlycontinue
